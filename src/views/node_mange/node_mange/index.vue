@@ -180,7 +180,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
-        <el-button type="primary" @click="submitForm">确 定</el-button>
+        <el-button type="primary" @click="submitForm" :loading="isSubmitting">确 定</el-button>
         <el-button @click="cancel">取 消</el-button>
       </div>
     </el-dialog>
@@ -262,6 +262,8 @@ export default {
           { required: true, message: "配置状态不能为空", trigger: "change" }
         ]
       },
+      // 是否正在提交
+      isSubmitting: false,
       // 接入服务器选项
       serverOptions: [], // 接入服务器选项列表
       // 当前服务器信息
@@ -273,6 +275,9 @@ export default {
   created() {
     this.getList()
     this.getServerOptions() // 初始化时获取服务器列表
+  },
+  activated() {
+    this.getServerOptions(); // 只要页面切回来，就自动刷新服务器列表数据
   },
   methods: {
     /** 查询Tinc节点集群管理列表 */
@@ -346,10 +351,14 @@ export default {
     },
     /** 提交按钮 */
     submitForm() {
+      if (this.isSubmitting) return;
+      this.isSubmitting = true; // 【终极加固】进门立即反锁，不给任何异步任务留间隙
+      
       // 修复：将getter名称从username改为name，确保正确获取当前登录用户
       this.form.useName = this.$store.getters.name;
       this.form.nodeStatus = this.form.nodeStatus || '0';
       this.form.status = this.form.status || '0';
+      
       this.$refs["form"].validate(valid => {
         if (valid) {
           if (this.form.id != null) {
@@ -357,14 +366,20 @@ export default {
               this.$modal.msgSuccess("修改成功")
               this.open = false
               this.getList()
+            }).finally(() => {
+              this.isSubmitting = false;
             })
           } else {
             addNode_mange(this.form).then(response => {
               this.$modal.msgSuccess("新增成功")
               this.open = false
               this.getList()
+            }).finally(() => {
+              this.isSubmitting = false;
             })
           }
+        } else {
+          this.isSubmitting = false; // 校验不通过，解锁让用户修改后再提
         }
       })
     },
