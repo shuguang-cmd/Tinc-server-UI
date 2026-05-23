@@ -95,7 +95,9 @@
       <el-table-column label="内网数量" align="center" prop="number" />
       <el-table-column label="状态" align="center" prop="status"> <!-- 修改: 从prop="staust"改为prop="status"，修正拼写错误 -->
         <template slot-scope="scope">
-          <dict-tag :options="dict.type.server_status" :value="scope.row.status"/>
+          <el-tag :type="scope.row.status == '1' ? 'success' : 'info'">
+            {{ scope.row.status == '1' ? '在线' : '离线' }}
+          </el-tag>
         </template>
       </el-table-column>
       <el-table-column label="操作" align="center" class-name="small-padding fixed-width">
@@ -164,7 +166,6 @@ import { listManger, getManger, delManger, addManger, updateManger } from "@/api
 
 export default {
   name: "Manger",
-  dicts: ['server_status'],
   data() {
     return {
       // 遮罩层
@@ -181,6 +182,15 @@ export default {
       total: 0,
       // 服务器集群管理表格数据
       mangerList: [],
+      // 字典数据（本地）
+      dict: {
+        type: {
+          server_status: [
+            { value: '0', label: '离线' },
+            { value: '1', label: '在线' }
+          ]
+        }
+      },
       // 弹出层标题
       title: "",
       // 是否正在提交
