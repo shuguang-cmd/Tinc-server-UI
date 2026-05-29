@@ -91,7 +91,7 @@ module.exports = {
         },
         // ===== 【新增】AI 助手的代理 (转发给 Python FastAPI) =====
         '/ai-api': {
-          target: `http://localhost:8000`,
+          target: `http://localhost:8082`,
           changeOrigin: true,
           pathRewrite: {
             '^/ai-api': '/ai-api' 

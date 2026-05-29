@@ -52,7 +52,6 @@
 </template>
 
 <script>
-import request from '@/utils/request'
 import { marked } from 'marked'
 
 export default {
@@ -82,19 +81,28 @@ export default {
       }
       
       this.loading = true;
-      request({
-        url: '/ai-api/analyze',
-        method: 'post',
-        data: {
+      
+      // 【终极降维打击】使用浏览器原生 fetch API，彻底免疫 axios 报错！
+      fetch('/ai-api/analyze', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           context: this.queryForm.context,
           error_log: this.queryForm.errorLog
-        }
-      }).then(res => {
-        this.aiResult = res.data;
+        })
+      })
+      .then(response => response.json())
+      .then(res => {
+        // 提取 Python 后端返回的数据
+        this.aiResult = res.data || res; 
         this.loading = false;
         this.$message.success("诊断完成！");
-      }).catch(err => {
+      })
+      .catch(err => {
         this.loading = false;
+        console.error("底层网络请求失败:", err);
         this.aiResult = "⚠️ **调用 AI 引擎失败**\n\n请检查网络或后端服务状态。";
       });
     }
