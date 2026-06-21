@@ -47,11 +47,6 @@ export const constantRoutes = [
     hidden: true
   },
   {
-    path: '/register',
-    component: () => import('@/views/register'),
-    hidden: true
-  },
-  {
     path: '/404',
     component: () => import('@/views/error/404'),
     hidden: true
@@ -117,39 +112,53 @@ export const constantRoutes = [
         meta: { title: '个人中心', icon: 'user' }
       }
     ]
+  },
+  {
+    path: '/tinc-server',
+    component: Layout,
+    hidden: true,
+    meta: { title: '服务器管理', icon: 'server' },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/tinc/server/index'),
+        name: 'TincServer',
+        meta: { title: '服务器管理', icon: 'server' }
+      }
+    ]
+  },
+  {
+    path: '/tinc-network',
+    component: Layout,
+    hidden: true,
+    meta: { title: '内网管理', icon: 'network' },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/tinc/network/index'),
+        name: 'TincNetwork',
+        meta: { title: '内网管理', icon: 'network' }
+      }
+    ]
+  },
+  {
+    path: '/tinc-node',
+    component: Layout,
+    hidden: true,
+    meta: { title: '节点管理', icon: 'node' },
+    children: [
+      {
+        path: '',
+        component: () => import('@/views/tinc/node/index'),
+        name: 'TincNode',
+        meta: { title: '节点管理', icon: 'node' }
+      }
+    ]
   }
 ]
 
 // 动态路由，基于用户权限动态去加载
 export const dynamicRoutes = [
-  {
-    path: '/monitor/job-log',
-    component: Layout,
-    hidden: true,
-    permissions: ['monitor:job:list'],
-    children: [
-      {
-        path: 'index/:jobId(\\d+)',
-        component: () => import('@/views/monitor/job/log'),
-        name: 'JobLog',
-        meta: { title: '调度日志', activeMenu: '/monitor/job' }
-      }
-    ]
-  },
-  {
-    path: '/tool/gen-edit',
-    component: Layout,
-    hidden: true,
-    permissions: ['tool:gen:edit'],
-    children: [
-      {
-        path: 'index/:tableId(\\d+)',
-        component: () => import('@/views/tool/gen/editTable'),
-        name: 'GenEdit',
-        meta: { title: '修改生成配置', activeMenu: '/tool/gen' }
-      }
-    ]
-  }
 ]
 
 // 防止连续点击多次路由报错
